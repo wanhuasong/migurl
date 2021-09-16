@@ -19,7 +19,7 @@ type Migration struct {
 	Client      *client.Client
 }
 
-func NewMigration(cfgFile, apiBaseURL, QiniuPublicDomain, genericStorageBaseURL string) (m *Migration, err error) {
+func NewMigration(cfgFile, apiBaseURL, qiniuPublicDomain, genericStorageBaseURL string) (m *Migration, err error) {
 	if cfgFile == "" {
 		err = errors.New("Invalid config file")
 		return
@@ -38,7 +38,7 @@ func NewMigration(cfgFile, apiBaseURL, QiniuPublicDomain, genericStorageBaseURL 
 	m = &Migration{
 		InstanceConfig:        cfg,
 		ApiBaseURL:            apiBaseURL,
-		QiniuPublicDomain:     QiniuPublicDomain,
+		QiniuPublicDomain:     qiniuPublicDomain,
 		GenericStorageBaseURL: genericStorageBaseURL,
 		Client:                cli,
 	}
@@ -105,6 +105,6 @@ func (m *Migration) InitContainerID() (err error) {
 			return
 		}
 	}
-	err = errors.New("container not found")
+	err = errors.New("Container not found")
 	return
 }
