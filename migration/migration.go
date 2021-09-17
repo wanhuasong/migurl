@@ -14,12 +14,13 @@ type Migration struct {
 	ApiBaseURL            string
 	QiniuPublicDomain     string
 	GenericStorageBaseURL string
+	NewBaseURL            string
 
 	ContainerID string
 	Client      *client.Client
 }
 
-func NewMigration(cfgFile, apiBaseURL, qiniuPublicDomain, genericStorageBaseURL string) (m *Migration, err error) {
+func NewMigration(cfgFile, apiBaseURL, qiniuPublicDomain, genericStorageBaseURL, newBaseURL string) (m *Migration, err error) {
 	if cfgFile == "" {
 		err = errors.New("Invalid config file")
 		return
@@ -40,6 +41,7 @@ func NewMigration(cfgFile, apiBaseURL, qiniuPublicDomain, genericStorageBaseURL 
 		ApiBaseURL:            apiBaseURL,
 		QiniuPublicDomain:     qiniuPublicDomain,
 		GenericStorageBaseURL: genericStorageBaseURL,
+		NewBaseURL:            newBaseURL,
 		Client:                cli,
 	}
 	return
@@ -61,9 +63,9 @@ func (m *Migration) Do() error {
 		return errors.New("Must specify apiBaseURL, qiniuPublicDomain or genericStorageBaseURL")
 	}
 	sqls := []string{
-		fmt.Sprintf("UPDATE `user` SET `avatar`=REPLACE(avatar, '%s', '');", baseURL),
-		fmt.Sprintf("UPDATE `team` SET `logo`=REPLACE(`logo`, '%s', '');", baseURL),
-		fmt.Sprintf("UPDATE `organization` SET `logo`=REPLACE(`logo`, '%s', ''), `favicon`=REPLACE(`favicon`, '%s', '');", baseURL, baseURL),
+		fmt.Sprintf("UPDATE `user` SET `avatar`=REPLACE(avatar, '%s', '%s');", baseURL, m.NewBaseURL),
+		fmt.Sprintf("UPDATE `team` SET `logo`=REPLACE(`logo`, '%s', '%s');", baseURL, m.NewBaseURL),
+		fmt.Sprintf("UPDATE `organization` SET `logo`=REPLACE(`logo`, '%s', '%s'), `favicon`=REPLACE(`favicon`, '%s', '%s');", baseURL, m.NewBaseURL, baseURL, m.NewBaseURL),
 	}
 	for _, sql := range sqls {
 		if err := m.execSql(sql); err != nil {
