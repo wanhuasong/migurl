@@ -1,0 +1,30 @@
+# Official documentation at http://goreleaser.com
+project_name: migurl
+builds:
+  - env:
+      - CGO_ENABLED=0
+    binary: migurl
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - windows
+      - linux
+      - darwin
+    ldflags:
+      - -w
+      - -s
+dist: release
+archives:
+  - name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
+    replacements:
+      darwin: darwin
+      linux: linux
+      windows: windows
+      amd64: amd64
+      arm64: arm64
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
