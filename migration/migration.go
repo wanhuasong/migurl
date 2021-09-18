@@ -48,7 +48,7 @@ func NewMigration(cfgFile, apiBaseURL, qiniuPublicDomain, genericStorageBaseURL,
 }
 
 func (m *Migration) Do() error {
-	if err := m.InitContainerID(); err != nil {
+	if err := m.initContainerID(); err != nil {
 		return errors.Trace(err)
 	}
 
@@ -89,7 +89,7 @@ func (m *Migration) execSql(sql string) error {
 	return errors.Trace(err)
 }
 
-func (m *Migration) InitContainerID() (err error) {
+func (m *Migration) initContainerID() (err error) {
 	containers, err := utils.ListContainers(m.Client, false)
 	if err != nil {
 		err = errors.Trace(err)
